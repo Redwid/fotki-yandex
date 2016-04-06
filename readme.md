@@ -1,20 +1,21 @@
 Yandex.Fotki Downloaders
 ========================
 
-This is a collection of scripts that allows to download photos from albums hoste at [Yandex.Fotki](Yandex.Fotki) .
-Photos are downloaded in Original Size.
+This is a forked version of the https://github.com/sumkincpp/yfd python script
 
-The major part of this scripts are taken from [Yandex.Club](http://clubs.ya.ru/fotki/posts.xml?tag=1223985)
 
 Python download.py
 ------------------
 
-Allows to download full albums or full photo archive from Yandex.Fotki.
+Allows to download all albums from Yandex.Fotki including private albums and albums that have more than 100 photos inside.
 
-Main script was published [here](http://clubs.ya.ru/fotki/replies.xml?item_no=51820), added
-some fixes to support unicode.
+Script checks if the file exists in destination folder and the size is the same.
+There are two checks on the file size: the first one is from yandex meta data (sometimes it's reported incorrect size) and the second check - is 'content-length' value from server responce.
 
-Tested and working on python 2.7.1 @ Fedora 16
+Tested and worked on python 2.7.3 @ Debian wheezy
+
+Dependency: progressbar
+To install run: sudo easy_install progressbar
 
 ### Usage
 
@@ -30,11 +31,14 @@ Downloading album by id from user hello
 
     python download.py hello -a 4632
 
-Bash down.sh
-------------------
+Downloading all albums (including private) for the user hello (designed to use from cron)
 
-Allows to download all photos for selected user
+    python download.py hello -d /media/photos -o OAUTH_TOKEN -a -t
 
-Go to down.sh script.
-On second line write down correct username.
-Run it.
+Downloading all albums (including private) for the user hello and display progress bar:
+
+    python download.py hello -d /media/photos -o OAUTH_TOKEN -a -t -p
+
+
+
+
