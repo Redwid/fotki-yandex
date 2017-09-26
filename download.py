@@ -2,6 +2,9 @@
 #source: https://github.com/sumkincpp/yfd/blob/master/readme.md
 #easy_install progressbar
 #http://stackoverflow.com/questions/3002085/python-to-print-out-status-bar-and-percentage
+#To fix UnicodeEncodeError follow this link:
+#https://stackoverflow.com/questions/9942594/unicodeencodeerror-ascii-codec-cant-encode-character-u-xa0-in-position-20
+#Run in shell: export LC_ALL='en_US.utf8'
 
 import os
 import time
