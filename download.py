@@ -23,7 +23,7 @@ CREATED = 1
 PUBLISHED = 2
 
 def encodeForPrint(text):
-    return text
+    return text.encode('utf-8')
 
 def sizeof_fmt(num, suffix='B'):
     for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
