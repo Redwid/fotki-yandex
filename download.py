@@ -178,7 +178,7 @@ if __name__ == "__main__":
 
     url = user_url.format(args.user)
     r = requests.get(url,  headers=headers)
-    print(r.text)
+    #print(r.text)
     user = json.loads(r.text)
     if "entries" in user:
         for album in user["entries"]:

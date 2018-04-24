@@ -12,7 +12,7 @@ Allows to download all albums from Yandex.Fotki including private albums and alb
 Script checks if the file exists in destination folder and the size is the same.
 There are two checks on the file size: the first one is from yandex meta data (sometimes it's reported incorrect size) and the second check - is 'content-length' value from server responce.
 
-Tested and worked on python 3 @ Debian stretch
+Tested and worked on python3 @ Debian stretch
 
 Dependency: progressbar33
 To install run: pip3 install -r requirements.txt
