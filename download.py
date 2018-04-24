@@ -16,7 +16,9 @@ import sys
 import locale
 import progressbar
 #import commands
+import subprocess
 from urllib.request import urlopen
+import sh
 
 oauth_header = "OAuth {}"
 user_url = "http://api-fotki.yandex.ru/api/users/{}/albums/?format=json"
@@ -189,12 +191,12 @@ if __name__ == "__main__":
 
             album_title = album["title"]#.encode('cp1251').decode('utf8')
             print(u'Download album {} (id: {})? '.format(encodeForPrint(album_title), album_id))
-            
+
             one = args.albums is None and raw_input("") in ["y", "Y"];
             two = args.albums is not None and (args.albums == [] or album_id in args.albums);
-            
+
             if (one or two):
                 grab(args.user, args.oauth_token, album_id, args.dest, args.use_title, imageCount, args.display_progress)
-    
-    dir_size = commands.getoutput('du -sh {}'.format(args.dest)).split()[0]
+
+    dir_size = sh.du('-sh', '{}'.format(args.dest))
     print(u'Destination folder size: {}'.format(dir_size))
