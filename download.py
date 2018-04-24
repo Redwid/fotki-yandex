@@ -64,8 +64,9 @@ def download(oauth_token, filename, url, t, display_progress):
     try:
         response = urlopen(url)
         bytesize = response.headers['content-length']
-        #if fileExist(filename, bytesize, display_progress, False):
-        #    return 0
+        if fileExist(filename, bytesize, display_progress, False):
+            print(u'"{}" ignore downloading size: {} ({})'.format(filename, bytesize, sizeof_fmt(bytesize)))
+            return 0
 
         f = open(filename, mode="wb")
         f.write(response.read())
@@ -73,10 +74,10 @@ def download(oauth_token, filename, url, t, display_progress):
         os.utime(filename, (time.time(), t))
 
         filesize = os.path.getsize(filename)
-        print(u'"{}" saved size: {} ({})'.format(filename, filesize, sizeof_fmt(filesize)))
+        print(u'"{}" downloaded size: {} ({})'.format(filename, filesize, sizeof_fmt(filesize)))
         return 1
     except IOError as e:
-        print(u'  Error, file: {} cannot be saved, url: {}, e: {}, {}'.format(encodeForPrint(filename), url, e.errno, e.strerror)) 
+        print(u'  Error, file: {} cannot be downloaded, url: {}, e: {}, {}'.format(encodeForPrint(filename), url, e.errno, e.strerror))
     return -1     
 
 def getFileName(album_dir, use_title, imageTitle, imageId):
