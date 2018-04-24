@@ -38,7 +38,7 @@ def sizeof_fmt(num, suffix='B'):
         num /= 1024.0
     return "%.1f%s%s" % (num, 'Yi', suffix)
 
-def fileExist(filename, bytesize, display_progress):
+def fileExist(filename, bytesize, display_progress, logOut):
     if os.path.exists(filename):
         filesize = os.path.getsize(filename)
         if int(filesize) == int(bytesize):
@@ -46,10 +46,13 @@ def fileExist(filename, bytesize, display_progress):
             #    print(u'"{}" already exists. Skipped.'.format(encodeForPrint(filename)))
             return True
         #else:
-        #    if display_progress == False:    
-        print(u'"{}" has a different size. Expected: {}, original: {}'.format(filename, bytesize, filesize))
-        print(u'"{}" has a different size. Expected: {}, original: {}'.format(encodeForPrint(filename), sizeof_fmt(int(bytesize)), sizeof_fmt(int(filesize))))
-    print(u'"{}" fileNotExist'.format(filename))
+        #    if display_progress == False:
+        if logOut:
+            print(u'"{}" has a different size. Expected: {}, original: {}'.format(filename, bytesize, filesize))
+            print(u'"{}" has a different size. Expected: {}, original: {}'.format(encodeForPrint(filename), sizeof_fmt(int(bytesize)), sizeof_fmt(int(filesize))))
+            return False
+    if logOut:
+        print(u'"{}" fileNotExist'.format(filename))
     return False
 
 # Download file and set the timestamp
@@ -61,13 +64,16 @@ def download(oauth_token, filename, url, t, display_progress):
     try:
         response = urlopen(url)
         bytesize = response.headers['content-length']
-        if fileExist(filename, bytesize, display_progress):
+        if fileExist(filename, bytesize, display_progress, False):
             return 0
 
         f = open(filename, mode="wb")
         f.write(response.read())
         f.close()
         os.utime(filename, (time.time(), t))
+
+        filesize = os.path.getsize(filename)
+        print(u'"{}" saved size: {} ({})'.format(filename, filesize, sizeof_fmt(filesize)))
         return 1
     except IOError as e:
         print(u'  Error, file: {} cannot be saved, url: {}, e: {}, {}'.format(encodeForPrint(filename), url, e.errno, e.strerror)) 
@@ -137,7 +143,7 @@ def grab(user_id, oauth_token, album_id, dest, use_title, imageCount, display_pr
 
             fileName = getFileName(album_dir, use_title, image["title"], image["id"])    
 
-            if fileExist(fileName, image["img"]["orig"]["bytesize"], display_progress):
+            if fileExist(fileName, image["img"]["orig"]["bytesize"], display_progress, True):
                 skippedCount = skippedCount + 1
                 updateProgress(display_progress, bar, index, maxCurrentImagesCount, "")
             else: 
