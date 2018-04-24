@@ -65,7 +65,7 @@ def download(oauth_token, filename, url, t, display_progress):
         response = urlopen(url)
         bytesize = response.headers['content-length']
         if fileExist(filename, bytesize, display_progress, False):
-            print(u'"{}" ignore downloading size: {} ({})'.format(filename, bytesize, sizeof_fmt(bytesize)))
+            print(u'"{}" ignore downloading size: {} ({})'.format(filename, int(bytesize), sizeof_fmt(int(bytesize))))
             return 0
 
         f = open(filename, mode="wb")
