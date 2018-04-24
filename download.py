@@ -9,14 +9,14 @@
 import os
 import time
 import re
-import urllib2
-#import urllib.request
+import requests
 import json
 import argparse
 import sys
 import locale
 import progressbar
-import commands
+#import commands
+from urllib.request import urlopen
 
 oauth_header = "OAuth {}"
 user_url = "http://api-fotki.yandex.ru/api/users/{}/albums/?format=json"
@@ -26,7 +26,8 @@ CREATED = 1
 PUBLISHED = 2
 
 def encodeForPrint(text):
-    return text.encode('utf-8')
+    return text
+    #return text.encode('utf-8')
 
 def sizeof_fmt(num, suffix='B'):
     for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
@@ -38,7 +39,7 @@ def sizeof_fmt(num, suffix='B'):
 def fileExist(filename, bytesize, display_progress):
     if os.path.exists(filename):
         filesize = os.path.getsize(filename) 
-        if long(filesize) == long(bytesize):
+        if filesize == bytesize:
             #if display_progress == False:
             #    print(u'"{}" already exists. Skipped.'.format(encodeForPrint(filename)))
             return True
@@ -48,19 +49,16 @@ def fileExist(filename, bytesize, display_progress):
         #        print(u'"{}" has a different size. Expected: {}, original: {}'.format(encodeForPrint(filename), sizeof_fmt(bytesize), sizeof_fmt(filesize))) 
     return False
 
-# Downlaod file and set the timestamp
+# Download file and set the timestamp
 # returns: 
 #   0 - skipped as file exists
 #   1 - downlaoded
 #  -1 - error
 def download(oauth_token, filename, url, t, display_progress):
     try:
-        req = urllib2.Request(url)
-        if oauth_token != "":
-            req.add_header("Authorization", oauth_header.format(oauth_token))
-        response = urllib2.urlopen(req)
+        response = urlopen(url)
         bytesize = response.headers['content-length']
-        if fileExist(filename, long(bytesize), display_progress):
+        if fileExist(filename, bytesize, display_progress):
             return 0
 
         f = open(filename, mode="wb")
@@ -105,10 +103,12 @@ def grab(user_id, oauth_token, album_id, dest, use_title, imageCount, display_pr
         bar.start()
 
     while True:
-        req = urllib2.Request(url)
+        headers = {}
         if oauth_token != "":
-            req.add_header("Authorization", oauth_header.format(oauth_token))
-        album = json.loads(urllib2.urlopen(req).read().decode("utf-8"))
+            headers = {'Authorization': oauth_header.format(oauth_token)}
+
+        req = requests.get(url, headers=headers)
+        album = json.loads(req.text)
         if not "entries" in album:
             return
 
@@ -160,8 +160,8 @@ def grab(user_id, oauth_token, album_id, dest, use_title, imageCount, display_pr
 
 
 if __name__ == "__main__":
-    reload(sys)
-    sys.setdefaultencoding('utf-8')
+    #reload(sys)
+    #sys.setdefaultencoding('utf-8')
     parser = argparse.ArgumentParser(description="Downloads albums from Yandex.Fotki. Skips files that already exist.")
     parser.add_argument("user")
     parser.add_argument("-a", "--albums", nargs="*", metavar="ID", help="list of album ids to proceed (download all if empty, prompt for every album if the argument is omitted)")
@@ -171,8 +171,15 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--oauth-token", help="use to provide OAuth token")
     args = parser.parse_args()
 
+
+    headers = {}
+    if args.oauth_token != "":
+        headers = {'Authorization': oauth_header.format(args.oauth_token)}
+
     url = user_url.format(args.user)
-    user = json.loads(urllib2.urlopen(url).read().decode("utf-8"))
+    r = requests.get(url,  headers=headers)
+    print(r.text)
+    user = json.loads(r.text)
     if "entries" in user:
         for album in user["entries"]:
             imageCount = album["imageCount"]
