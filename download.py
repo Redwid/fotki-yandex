@@ -40,15 +40,16 @@ def sizeof_fmt(num, suffix='B'):
 
 def fileExist(filename, bytesize, display_progress):
     if os.path.exists(filename):
-        filesize = os.path.getsize(filename) 
-        if filesize == bytesize:
+        filesize = os.path.getsize(filename)
+        if int(filesize) == int(bytesize):
             #if display_progress == False:
             #    print(u'"{}" already exists. Skipped.'.format(encodeForPrint(filename)))
             return True
         #else:
         #    if display_progress == False:    
-        #        #print(u'"{}" has a different size. Expected: {}, original: {}'.format(filename, bytesize, filesize)) 
-        #        print(u'"{}" has a different size. Expected: {}, original: {}'.format(encodeForPrint(filename), sizeof_fmt(bytesize), sizeof_fmt(filesize))) 
+        print(u'"{}" has a different size. Expected: {}, original: {}'.format(filename, bytesize, filesize))
+        print(u'"{}" has a different size. Expected: {}, original: {}'.format(encodeForPrint(filename), sizeof_fmt(int(bytesize)), sizeof_fmt(int(filesize))))
+    print(u'"{}" fileNotExist'.format(filename))
     return False
 
 # Download file and set the timestamp
@@ -164,6 +165,8 @@ def grab(user_id, oauth_token, album_id, dest, use_title, imageCount, display_pr
 if __name__ == "__main__":
     #reload(sys)
     #sys.setdefaultencoding('utf-8')
+    #subprocess.call(["export", "LC_ALL='en_US.utf8'", ], shell=True)
+
     parser = argparse.ArgumentParser(description="Downloads albums from Yandex.Fotki. Skips files that already exist.")
     parser.add_argument("user")
     parser.add_argument("-a", "--albums", nargs="*", metavar="ID", help="list of album ids to proceed (download all if empty, prompt for every album if the argument is omitted)")
