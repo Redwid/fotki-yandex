@@ -47,12 +47,12 @@ def fileExist(filename, bytesize, display_progress, logOut):
             return True
         #else:
         #    if display_progress == False:
-        if logOut:
-            print(u'"{}" has a different size. Expected: {}, original: {}'.format(filename, bytesize, filesize))
-            print(u'"{}" has a different size. Expected: {}, original: {}'.format(encodeForPrint(filename), sizeof_fmt(int(bytesize)), sizeof_fmt(int(filesize))))
-            return False
-    if logOut:
-        print(u'"{}" fileNotExist'.format(filename))
+        #if logOut:
+        #    print(u'"{}" has a different size. Expected: {}, original: {}'.format(filename, bytesize, filesize))
+        #    print(u'"{}" has a different size. Expected: {}, original: {}'.format(encodeForPrint(filename), sizeof_fmt(int(bytesize)), sizeof_fmt(int(filesize))))
+        #    return False
+    #if logOut:
+    #    print(u'"{}" fileNotExist'.format(filename))
     return False
 
 # Download file and set the timestamp
@@ -65,7 +65,8 @@ def download(oauth_token, filename, url, t, display_progress):
         response = urlopen(url)
         bytesize = response.headers['content-length']
         if fileExist(filename, bytesize, display_progress, False):
-            print(u'"{}" ignore downloading size: {} ({})'.format(filename, int(bytesize), sizeof_fmt(int(bytesize))))
+            #Yandex metadata could have incorrect values, so ignore downloading if size are the same
+            #print(u'"{}" ignore downloading size: {} ({})'.format(filename, int(bytesize), sizeof_fmt(int(bytesize))))
             return 0
 
         f = open(filename, mode="wb")
@@ -74,7 +75,7 @@ def download(oauth_token, filename, url, t, display_progress):
         os.utime(filename, (time.time(), t))
 
         filesize = os.path.getsize(filename)
-        print(u'"{}" downloaded size: {} ({})'.format(filename, filesize, sizeof_fmt(filesize)))
+        #print(u'"{}" downloaded size: {} ({})'.format(filename, filesize, sizeof_fmt(filesize)))
         return 1
     except IOError as e:
         print(u'  Error, file: {} cannot be downloaded, url: {}, e: {}, {}'.format(encodeForPrint(filename), url, e.errno, e.strerror))
