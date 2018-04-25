@@ -74,7 +74,7 @@ def download(oauth_token, filename, url, t, display_progress):
         f.close()
         os.utime(filename, (time.time(), t))
 
-        filesize = os.path.getsize(filename)
+        #filesize = os.path.getsize(filename)
         #print(u'"{}" downloaded size: {} ({})'.format(filename, filesize, sizeof_fmt(filesize)))
         return 1
     except IOError as e:
